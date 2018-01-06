@@ -220,6 +220,7 @@ public class Client {
 
         public Frame() throws HeadlessException {
             setSize(X_SIZE, Y_SIZE);
+            setTitle("School");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setResizable(true);
             setVisible(true);
