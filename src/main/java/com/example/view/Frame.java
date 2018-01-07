@@ -16,11 +16,13 @@ public class Frame extends JFrame {
 
     private int studentID;
     MySQLConnector mySQLConnector;
-    PanelStudent ps;
+    JPanel ps;
+    String whichPanel;
 
-    public Frame(MySQLConnector mySQLConnector, int id) throws HeadlessException {
+    public Frame(MySQLConnector mySQLConnector, int id, String whichPanel) throws HeadlessException {
         this.mySQLConnector = mySQLConnector;
         this.studentID = id;
+        this.whichPanel = whichPanel;
 
         setSize(X_SIZE, Y_SIZE);
         setTitle("School");
@@ -28,8 +30,14 @@ public class Frame extends JFrame {
         setResizable(true);
         setVisible(true);
 
-        ps = new PanelStudent(this.mySQLConnector, this.studentID);
+        if (whichPanel.equals("student")) {
+            ps = new PanelStudent(this.mySQLConnector, this.studentID);
+
+        } else if (whichPanel.equals("teacher")) {
+            ps = new PanelTeacher(this.mySQLConnector, this.studentID);
+        }
         add(ps);
+
     }
 
 }

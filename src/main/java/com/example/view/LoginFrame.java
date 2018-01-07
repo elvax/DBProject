@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class LoginFrame extends JFrame {
+public class LoginFrame extends JFrame{
 
     JButton loginButton;
     JPanel loginPanel;
@@ -17,11 +17,16 @@ public class LoginFrame extends JFrame {
     JTextField passwordText;
     JLabel usernameLabel;
     JLabel passwordLabel;
+    ButtonGroup buttonGroup;
+    JRadioButton studentRB;
+    JRadioButton teacherRB;
+    JRadioButton adminRB;
 
     MessageDigest md;
 
-    private int studentID;
-    private int teacherID;
+    private int ID;
+
+    String whichPanel;
 
     private MySQLConnector mySQLConnector;
     private Frame frame;
@@ -38,6 +43,12 @@ public class LoginFrame extends JFrame {
             e.printStackTrace();
         }
 
+        initialize();
+
+        whichPanel = getTypeUser();
+
+    }
+    private void initialize() {
         loginButton = new JButton("Login");
         loginPanel = new JPanel();
         userText = new JTextField(15);
@@ -48,7 +59,6 @@ public class LoginFrame extends JFrame {
         setSize(300, 200);
         setLocation(500, 280);
         loginPanel.setLayout(null);
-
 
         userText.setBounds(95, 30, 150, 20);
         passwordText.setBounds(95, 65, 150, 20);
@@ -63,6 +73,7 @@ public class LoginFrame extends JFrame {
         loginPanel.add(passwordLabel);
 
         getContentPane().add(loginPanel);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
@@ -71,7 +82,19 @@ public class LoginFrame extends JFrame {
                 whenLoginButtonClicked();
             }
         });
+    }
 
+
+    private String getTypeUser() {
+        Object[] possibilities = {"student", "teacher", "admin"};
+        return (String) JOptionPane.showInputDialog(
+                null,
+                "Who are you:\n",
+                "",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                possibilities,
+                "2");
     }
 
     /**
@@ -88,9 +111,13 @@ public class LoginFrame extends JFrame {
         //Sprawdzić czy się zgadza z bazą
         String idString = mySQLConnector.loginStudent(givenUserName, hashPassword);
         if (idString != null) {
-            studentID = Integer.parseInt(idString);
+
+            ID = Integer.parseInt(idString);
             this.setVisible(false);
-            frame = new Frame(this.mySQLConnector, studentID);
+            frame = new Frame(this.mySQLConnector, ID, whichPanel);
+
+
+
         } else if (givenUserName.equals("") || givenPassword.equals("")) {
             JOptionPane.showMessageDialog(null, "Please insert Username and Password");
         } else {
