@@ -8,6 +8,10 @@ public class MySQLConnector {
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
 
+    public MySQLConnector() throws Exception{
+        prepareEverything();
+    }
+
     public void prepareEverything() throws Exception{
 
         try {
