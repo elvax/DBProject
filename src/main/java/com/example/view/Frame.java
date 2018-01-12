@@ -11,7 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Frame extends JFrame {
-    private final int X_SIZE = 700;
+    private final int X_SIZE = 750;
     private final int Y_SIZE = 750;
 
     private int studentID;
@@ -27,14 +27,15 @@ public class Frame extends JFrame {
         setSize(X_SIZE, Y_SIZE);
         setTitle("School");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(true);
+        setResizable(false);
         setVisible(true);
 
         if (whichPanel.equals("student")) {
             ps = new PanelStudent(this.mySQLConnector, this.studentID);
-
         } else if (whichPanel.equals("teacher")) {
             ps = new PanelTeacher(this.mySQLConnector, this.studentID);
+        } else if (whichPanel.equals("admin")) {
+            ps = new PanelAdmin(this.mySQLConnector);
         }
         add(ps);
 

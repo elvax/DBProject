@@ -6,36 +6,46 @@ import javax.swing.*;
 import javax.xml.bind.DatatypeConverter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Okno służące do logowania
+ */
 public class LoginFrame extends JFrame{
 
-    JButton loginButton;
-    JPanel loginPanel;
-    JTextField userText;
-    JTextField passwordText;
-    JLabel usernameLabel;
-    JLabel passwordLabel;
-    ButtonGroup buttonGroup;
-    JRadioButton studentRB;
-    JRadioButton teacherRB;
-    JRadioButton adminRB;
+    private JButton loginButton;
+    private JPanel loginPanel;
+    private JTextField userText;
+    private JTextField passwordText;
+    private JLabel usernameLabel;
+    private JLabel passwordLabel;
 
-    MessageDigest md;
+    private MessageDigest md;
 
     private int ID;
 
-    String whichPanel;
+    private String whichPanel;
 
     private MySQLConnector mySQLConnector;
     private Frame frame;
 
 
-    public LoginFrame(MySQLConnector mySQLConnector) {
+
+    public LoginFrame() {
         super("Login");
 
-        this.mySQLConnector = mySQLConnector;
+        try {
+            mySQLConnector = new MySQLConnector();
+            whichPanel = getTypeUser();
+            mySQLConnector.prepareEverything(whichPanel);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             md = MessageDigest.getInstance("MD5");
@@ -44,8 +54,6 @@ public class LoginFrame extends JFrame{
         }
 
         initialize();
-
-        whichPanel = getTypeUser();
 
     }
     private void initialize() {
@@ -108,19 +116,43 @@ public class LoginFrame extends JFrame{
 
         String hashPassword = getHash(givenPassword);
 
+        if (whichPanel.equals("admin")) {
+            try {
+                File file = new File("src/main/resources/admin.txt");
+
+                FileReader fileReader = new FileReader(file);
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                bufferedReader.readLine();
+                String login = bufferedReader.readLine();
+                String pass = bufferedReader.readLine();
+
+                if (login.equals(givenUserName) && pass.equals(hashPassword)) {
+                    this.setVisible(false);
+                    frame = new Frame(this.mySQLConnector, 0, whichPanel);
+                }
+
+                fileReader.close();
+                bufferedReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String idString=null;
+        if (whichPanel.equals("student")) {
+            idString = mySQLConnector.loginStudent(givenUserName, hashPassword);
+        } else if (whichPanel.equals("teacher")) {
+            idString = mySQLConnector.loginTeacher(givenUserName, hashPassword);
+        }
         //Sprawdzić czy się zgadza z bazą
-        String idString = mySQLConnector.loginStudent(givenUserName, hashPassword);
+
         if (idString != null) {
 
             ID = Integer.parseInt(idString);
             this.setVisible(false);
             frame = new Frame(this.mySQLConnector, ID, whichPanel);
 
-
-
         } else if (givenUserName.equals("") || givenPassword.equals("")) {
-            JOptionPane.showMessageDialog(null, "Please insert Username and Password");
-        } else {
             JOptionPane.showMessageDialog(null, "Wrong Username / Password");
             userText.setText("");
             passwordText.setText("");

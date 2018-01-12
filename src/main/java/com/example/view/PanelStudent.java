@@ -12,15 +12,15 @@ public class PanelStudent extends JPanel {
     private MySQLConnector mySQLConnector;
     private int studentID;
 
-    JTextArea messageArea;
-    JTextArea myClassesTextArea;
-    JScrollPane scrollPane1;
-    JScrollPane scrollPane2;
-    JButton joinButton;
-    JButton showMyClassesButton;
-    JButton showAvilableClassesB;
-    JLabel giveIdLabel;
-    JLabel welcomeLabel;
+    private JTextArea messageArea;
+    private JTextArea myClassesTextArea;
+    private JScrollPane scrollPane1;
+    private JScrollPane scrollPane2;
+    private JButton joinButton;
+    private JButton showMyClassesButton;
+    private JButton showAvilableClassesB;
+    private JLabel giveIdLabel;
+    private JLabel welcomeLabel;
 
     public PanelStudent(MySQLConnector mySQLConnector, int studentID) {
         this.studentID = studentID;
@@ -37,7 +37,7 @@ public class PanelStudent extends JPanel {
             }
         });
 
-        myClassesTextArea = new JTextArea(20, 60);
+        myClassesTextArea = new JTextArea(20, 65);
         scrollPane2 = new JScrollPane(myClassesTextArea);
 
         giveIdLabel = new JLabel();
@@ -63,7 +63,7 @@ public class PanelStudent extends JPanel {
             }
         });
 
-        messageArea = new JTextArea(20, 60);
+        messageArea = new JTextArea(20, 65);
         scrollPane1 = new JScrollPane(messageArea);
 
         add(welcomeLabel, "North");
@@ -77,8 +77,7 @@ public class PanelStudent extends JPanel {
 
     private void whenshowAvilableClassesBClicked(){
         try {
-
-            messageArea.setText("id name start end price prowadzacy miejsca\n");
+            messageArea.setText("");
             messageArea.append(mySQLConnector.writeAvailableCourses());
 
         } catch (Exception e) {
@@ -87,17 +86,17 @@ public class PanelStudent extends JPanel {
     }
 
     private void whenJoinButtonClicked() {
-        String userInput = getUserInput();
+        String userInput = getUserInput("Podaj id zajec");
         if(userInput != null)
             mySQLConnector.joinStudent(userInput, Integer.toString(studentID));
     }
 
     private void whenShowMyClassesButtonClicked() {
-        myClassesTextArea.setText("id name start end price prowadzacy miejsca\n");
+        myClassesTextArea.setText("");
         myClassesTextArea.append(mySQLConnector.showStudentClasses(Integer.toString(studentID)));
     }
 
-    private String getUserInput() {
-        return JOptionPane.showInputDialog("Podaj id zajec");
+    private String getUserInput(String msg) {
+        return JOptionPane.showInputDialog(msg);
     }
 }
