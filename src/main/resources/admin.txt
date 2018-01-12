@@ -1,0 +1,3 @@
+jdbc:mysql://localhost/DanceSchool?user=admin_user&password=adminpw
+admin_user
+70E76A15DA00E6301ADE718CC9416F79

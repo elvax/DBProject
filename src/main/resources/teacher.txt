@@ -1,0 +1,1 @@
+jdbc:mysql://localhost/DanceSchool?user=teacher_user&password=teacherpw
